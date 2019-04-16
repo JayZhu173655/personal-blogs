@@ -1,4 +1,7 @@
 const Router = require("koa-router");
+// 获取用户表的控制层
+const user = require("../control/user.js")
+
 const router = new Router;
 
 // 设计首页 ctx是一次请求的上下文对象
@@ -25,8 +28,23 @@ router.get(/^\/user\/(?=reg|login)/, async (ctx) => {
     const show = /reg$/.test(ctx.path);
     await ctx.render("register", {show})
 })
+/*
+// 处理用户登录的post请求
+router.post("/user/login", async (ctx) => {
+    // console.log("用户正在登陆");
+    // console.log(ctx.request.body);
+    // 获取登录的账号和密码
+    const data = ctx.request.body;
 
+    //登录需要把获取的账户、密码和数据库的对比下
+})
+*/
 
+// 注册用户路由
+router.post("/user/reg", user.reg);
+
+// 用户登录路由
+router.post("/user/login", user.login);
 
 module.exports = router;
 /*
