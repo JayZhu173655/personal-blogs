@@ -90,7 +90,29 @@ exports.login = async ctx => {
                 status: "密码不正确，登录失败"
             })
         }
+        
+        // 让用户设置cookie，在cookie里存username 和加密后的password 还有权限
+        ctx.cookies.set("username", username,{
+            domain: "localhost",
+            path: "/",
+            maxAge: 72e5,
+            httpOnly: true, // 当值为true 就是不让客户端访问这个cookie
+            overwrite: false,
+        });
+        // 用户在数据库的_id值
+        ctx.cookies.set("uid", data[0]._id,{
+            domain: "localhost",
+            path: "/",
+            maxAge: 72e5,
+            httpOnly: true, 
+            overwrite: false,
+        })
 
+        ctx.session = {
+            username,
+            uid: data[0]._id
+        }
+        
         // 密码正确
         await ctx.render("isOk", {
             status: "登录成功"
@@ -107,4 +129,31 @@ exports.login = async ctx => {
             })
         }
     });
+}
+
+// 确定用户状态 保持用户的状态
+exports.keepLog = async (ctx, next) => {
+    if(ctx.session.isNew0){
+        if(ctx.cookie.get("username")){
+            ctx.session = {
+                username: ctx.cookie.get("username"),
+                uid: ctx.cookie.get("uid")
+            }
+        }
+    }
+    await next();
+} 
+
+// 用户退出中间件
+exports.logout = async ctx => {
+    ctx.session = null;
+    ctx.cookies.set("username",null, {
+        maxAge: 0
+    });
+    ctx.cookies.set("uid", null, {
+        maxAge: 0
+    });
+
+    // 推出后重定向到首页去 后端重定向方法ctx.redirect("地址"                                        ) 前端重定向方法 location.href = "地址"
+    ctx.redirect("/");
 }

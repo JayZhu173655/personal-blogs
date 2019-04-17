@@ -1,19 +1,19 @@
 const Router = require("koa-router");
 // 获取用户表的控制层
 const user = require("../control/user.js")
+// 获取文章控制层
+const article = require("../control/article.js")
 
 const router = new Router;
 
 // 设计首页 ctx是一次请求的上下文对象
-router.get("/", async (ctx) => {
+router.get("/", user.keepLog, async (ctx) => {
     // ctx.body = "index"
     // 因为app.js里面配置了视图模版的路径，这里的路径都是相对于设置好的哪个文件夹
     // 模版引擎的后缀可以不写 根目录也可以不写
     await ctx.render("index.pug", {
         title: "个人博客",
-        session: {
-            role: 777
-        }
+        session:ctx.session
     });
 })
 
@@ -45,6 +45,15 @@ router.post("/user/reg", user.reg);
 
 // 用户登录路由
 router.post("/user/login", user.login);
+
+// 用户退出登录状态
+router.get("/user/logout", user.logout)
+
+// 文章发表页面路由
+router.get("/article", user.keepLog, article.addPage)
+
+// 发表文章提交
+router.post("/article", user.keepLog, article.add);
 
 module.exports = router;
 /*
