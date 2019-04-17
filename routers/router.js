@@ -4,6 +4,9 @@ const user = require("../control/user.js")
 // 获取文章控制层
 const article = require("../control/article.js")
 
+const comment = require("../control/comment.js")
+const admin = require("../control/admin.js")
+
 const router = new Router;
 
 // 设计首页 ctx是一次请求的上下文对象
@@ -60,6 +63,24 @@ router.post("/article", user.keepLog, article.add);
 
 // 文章列表分页路由
 router.get("/page/:id", article.getList)
+
+// 文章的详情页面路由
+router.get("/article/:id", user.keepLog, article.details)
+
+
+// 发表评论
+router.post("/comment", user.keepLog, comment.save)
+
+// 后台管理页面路由
+router.get("/admin/:id", user.keepLog, admin.index)
+
+// 没有路由的页面显示404页面
+router.get("*", async ctx => {
+    await ctx.render("404", {
+        title: "页面不存在"
+    })
+})
+
 
 module.exports = router;
 /*

@@ -10,7 +10,8 @@ const ArticleSchema = new Schema({
         type: ObjectId,
         ref: "users"
      }, // 关联user文档（联表查询）
-    tips: String
+    tips: String,
+    commentNum: Number
 },
 {
     versionKey: false,

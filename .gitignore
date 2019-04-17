@@ -59,3 +59,6 @@ typings/
 
 # next.js build output
 .next
+database/db/journal/WiredTigerLog.0000000001
+database/db/journal/WiredTigerLog.0000000002
+database/db/journal/WiredTigerLog.0000000006

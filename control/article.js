@@ -2,6 +2,7 @@ const {db} = require("../Schema/config.js");
 const ArticleSchema = require("../Schema/article.js");
 // 这里导入user的Schema,为了拿到用户的数据的操作 users 集合的实例对象
 const UserSchema = require("../Schema/user.js");
+const CommentSchema = require("../Schema/comment.js");
 
 
 // 通过db对象创建操作article数据库的模型对象
@@ -9,6 +10,9 @@ const Article = db.model("articles", ArticleSchema);
 
 // 通过db对象创建操作user数据库的模型对象
 const User = db.model("users", UserSchema);
+
+// 通过db对象创建操作comment数据库的模型对象
+const Comment = db.model("comments", CommentSchema);
 
 // 文章发表
 exports.addPage = async (ctx) => {
@@ -34,10 +38,16 @@ exports.add = async ctx => {
 
     // 向data内添加文章的作者
     data.author = ctx.session.uid;
+    data.commentNum = 0;
 
         await new Promise((resolve,reject) => {
             new Article(data).save((err, data) => {
                 if(err) return reject(err);
+                // 发表文章后更新用户文章数
+                User.update({_id: data.author}, {$inc: {articleNum: 1}}, err => {
+                    if(err) return console.log(err)
+                    console.log("文章发表成功")
+                })
                 resolve(data);
             })
         })
@@ -86,6 +96,34 @@ exports.getList = async ctx => {
         title: "个人博客",
         artList,
         maxNum
+    })
+};
+
+// 文章详情
+exports.details = async ctx => {
+    // 取动态路由的id
+    const _id = ctx.params.id;
+
+    const article = await Article
+        .findById(_id)
+        .populate("author", "username")
+        .then(data => data)
+
+    // 查找文章的相关评论
+    const comment = await Comment
+        .find({ article: _id })
+        .sort("-created")
+        .populate("from", "username avatar")
+        .then(data => data)
+        .catch(err => {
+            console.log(err)
+        })
+    
+    await ctx.render("article", {
+        title: article.title,
+        article,
+        comment,
+        session: ctx.session
     })
 }
 

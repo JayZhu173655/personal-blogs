@@ -48,3 +48,39 @@ app
 app.listen(3000, () => {
     console.log("项目正常运行，监听在3000端口")
 })
+
+// 创建管理员用户，如果管理员用户存在则返回
+{
+    const {db} = require("./Schema/config.js");
+    const UserSchema = require("./Schema/user.js");
+    const encrypt = require("./until/encrypt.js");
+
+
+    // 通过db对象创建操作user数据库的模型对象
+    const User = db.model("users", UserSchema);
+
+    // 创建管理员账户
+    User
+        .find({username: "admin"})
+        .then(data => {
+            if(data.length === 0){
+                // 管理员账户不存在
+                new User({
+                    username: "admin",
+                    password: encrypt("admin"),
+                    role: 888,
+                    commentNum: 0,
+                    articleNum: 0
+                })
+                .save()
+                .then(data => {
+                    console.log("管理员用户名: admin 密码:admin131415926")
+                })
+                .catch(err => {
+                    console.log("管理员账号检查失败")
+                })
+            } else{
+                console.log("管理员用户名: admin 密码:admin131415926")
+            }
+        })
+}
