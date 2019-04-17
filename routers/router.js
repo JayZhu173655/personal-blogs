@@ -7,6 +7,8 @@ const article = require("../control/article.js")
 const router = new Router;
 
 // 设计首页 ctx是一次请求的上下文对象
+router.get("/", user.keepLog, article.getList);
+/*
 router.get("/", user.keepLog, async (ctx) => {
     // ctx.body = "index"
     // 因为app.js里面配置了视图模版的路径，这里的路径都是相对于设置好的哪个文件夹
@@ -16,6 +18,7 @@ router.get("/", user.keepLog, async (ctx) => {
         session:ctx.session
     });
 })
+*/
 
 // 动态路由 用来处理用户的登录、注册状态
 /*
@@ -54,6 +57,9 @@ router.get("/article", user.keepLog, article.addPage)
 
 // 发表文章提交
 router.post("/article", user.keepLog, article.add);
+
+// 文章列表分页路由
+router.get("/page/:id", article.getList)
 
 module.exports = router;
 /*

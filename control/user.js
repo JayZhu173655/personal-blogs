@@ -1,10 +1,10 @@
 const {db} = require("../Schema/config.js");
 const UserSchema = require("../Schema/user.js");
-const encrypt = require("../until/encrypt.js")
+const encrypt = require("../until/encrypt.js");
 
 
 // 通过db对象创建操作user数据库的模型对象
-const User = db.model("users", UserSchema)
+const User = db.model("users", UserSchema);
 // 用户注册
 exports.reg = async (ctx) => {
     //console.log("这事处理用户注册的中间件")
@@ -110,7 +110,8 @@ exports.login = async ctx => {
 
         ctx.session = {
             username,
-            uid: data[0]._id
+            uid: data[0]._id,
+            avatar: data[0].avatar
         }
         
         // 密码正确

@@ -19,10 +19,10 @@ block contents
       //- 文章列表
       .layui-col-md8
         ul.article-list
-          li index.html页面
-          li 这是 pug 渲染出来的首页
+          //- li index.html页面
+          //- li 这是 pug 渲染出来的首页
         
-          //each info in artList
+          each info in artList
             li
               a.list-face
                 img(src=info.author.avatar, alt=info.author)
