@@ -6,6 +6,7 @@ const article = require("../control/article.js")
 
 const comment = require("../control/comment.js")
 const admin = require("../control/admin.js")
+const upload = require("../until/upload.js")
 
 const router = new Router;
 
@@ -73,6 +74,22 @@ router.post("/comment", user.keepLog, comment.save)
 
 // 后台管理页面路由
 router.get("/admin/:id", user.keepLog, admin.index)
+
+// 用户中心上传头像
+router.post("/upload", user.keepLog, upload.single("file"), user.upload)
+
+
+// 获取用户的评论
+router.get("/user/comments", user.keepLog, comment.comlist)
+
+// 删除用户的评论
+router.del("/comment/:id", user.keepLog, comment.del)
+
+// 获取用户文章
+router.get("/user/articles", user.keepLog, article.artlist)
+
+// 删除用户的文章
+router.del("/article/:id", user.keepLog, article.del)
 
 // 没有路由的页面显示404页面
 router.get("*", async ctx => {

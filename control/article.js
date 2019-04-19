@@ -127,3 +127,66 @@ exports.details = async ctx => {
     })
 }
 
+// 获取用户文章列表
+exports.artlist = async ctx => {
+    const uid = ctx.session.uid
+    const data = await Article.find({author: uid})
+    console.log(data)
+    ctx.body = {
+        code: 0,
+        count: data.length,
+        data
+    }
+}
+// 用户删除文章
+/*
+// 下面代码逻辑问题，暂时没实现
+exports.del = async ctx => {
+    const _id = ctx.params.id
+    const uid = ctx.session.uid
+
+    // 用户的文章数减1
+    // 删除文章内的所有评论
+    // 文章内评论对应的用户的评论数减1
+    // 删除文章
+    let res = {}
+
+    await Article.deleteOne({_id}).exec(async err =>{
+        if(err){
+            res = {
+                state: 0,
+                message: "文章删除失败"
+            }
+        } else{
+            await Article.findById(_id,(err, data) => {
+                if(err) return console.log(err)
+                uid = data.author
+            })
+        }
+    })
+
+    await User.update({_id: uid}, {$inc: {articleNum: -1}})
+    await Comment.find({article: _id}).then(async data => {
+        let len = data.length
+        let i = 0
+
+        async function deleteUser(){
+            if(i >= len) return
+            const cId = data[i]._id
+            await Comment.deleteOne({_id: cId}).then(data => {
+                User.update({_id: data[i].from}, {$inc: {commentNum: -1}}, err => {
+                    if(err) return console.log(err)
+                    i++
+                })
+            })
+        }
+        await deleteUser()
+        res = {
+            state: 1,
+            message: "文章删除成功"
+        }
+    })
+    
+    ctx.body = res
+}
+*/

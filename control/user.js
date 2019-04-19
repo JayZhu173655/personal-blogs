@@ -139,9 +139,13 @@ exports.login = async ctx => {
 exports.keepLog = async (ctx, next) => {
     if(ctx.session.isNew0){
         if(ctx.cookie.get("username")){
+
+            let uid = ctx.cookies.get("uid")
+                .then(data => data.avatar)
             ctx.session = {
                 username: ctx.cookie.get("username"),
-                uid: ctx.cookie.get("uid")
+                uid,
+                avatar
             }
         }
     }
@@ -160,4 +164,27 @@ exports.logout = async ctx => {
 
     // 推出后重定向到首页去 后端重定向方法ctx.redirect("地址"                                        ) 前端重定向方法 location.href = "地址"
     ctx.redirect("/");
+}
+
+// 用户上传头像
+exports.upload = async ctx => {
+    const filename = ctx.req.file.filename
+    let data = {}
+    await User.updateOne({_id: ctx.session.uid}, {$set: {
+        avatar: "/avatar/" + filename
+    }}, (err, res) => {
+        if(err){
+            data = {
+                    status: 0,
+                    message: err
+            }
+        } else {
+            data = {
+                status: 1,
+                message: "头像上传成功"
+            } 
+        }
+    })
+
+    ctx.body = data
 }

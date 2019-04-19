@@ -67,7 +67,7 @@ app.listen(3000, () => {
                 // 管理员账户不存在
                 new User({
                     username: "admin",
-                    password: encrypt("admin"),
+                    password: encrypt("admin131415926"),
                     role: 888,
                     commentNum: 0,
                     articleNum: 0
