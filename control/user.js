@@ -1,10 +1,15 @@
+/*
 const {db} = require("../Schema/config.js");
 const UserSchema = require("../Schema/user.js");
-const encrypt = require("../until/encrypt.js");
-
 
 // 通过db对象创建操作user数据库的模型对象
 const User = db.model("users", UserSchema);
+*/
+// 上面单离出去
+const Article = require("../Models/article.js")
+const User = require("../Models/user.js")
+const Comment = require("../Models/comment.js")
+const encrypt = require("../until/encrypt.js");
 // 用户注册
 exports.reg = async (ctx) => {
     //console.log("这事处理用户注册的中间件")
@@ -187,4 +192,41 @@ exports.upload = async ctx => {
     })
 
     ctx.body = data
+}
+
+
+// 获取用户列表
+exports.userlist = async ctx => {
+   
+    const data = await User.find()
+    //console.log(data)
+    ctx.body = {
+        code: 0,
+        count: data.length,
+        data
+    }
+}
+// 管理员删除用户
+
+exports.del = async ctx => {
+    const _id = ctx.request.url.replace(/^(\/user\/)/g, "")
+    
+   
+    let res = {
+        state: 1,
+        message: "用户删除成功"
+    }
+   
+ 
+    await User.findById(_id)
+         .then(data => { data.remove() })
+         .catch(err => {
+             res = {
+                 state: 0,
+                 message: err
+             }
+         })
+    
+    ctx.body = res
+    //console.log(_id)
 }

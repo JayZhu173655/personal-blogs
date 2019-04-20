@@ -1,3 +1,4 @@
+/*
 const {db} = require("../Schema/config.js");
 const ArticleSchema = require("../Schema/article.js");
 // 这里导入user的Schema,为了拿到用户的数据的操作 users 集合的实例对象
@@ -13,7 +14,11 @@ const User = db.model("users", UserSchema);
 
 // 通过db对象创建操作comment数据库的模型对象
 const Comment = db.model("comments", CommentSchema);
-
+*/
+// 上面单离出去
+const Article = require("../Models/article.js")
+const User = require("../Models/user.js")
+const Comment = require("../Models/comment.js")
 
 // 保存评论
 exports.save = async ctx => {
@@ -63,6 +68,7 @@ exports.save = async ctx => {
 exports.comlist = async ctx => {
     const uid = ctx.session.uid
     const data = await Comment.find({from: uid}).populate("article", "title")
+    console.log(data)
     ctx.body = {
         code: 0,
         count: data.length,
@@ -73,6 +79,7 @@ exports.comlist = async ctx => {
 // 删除评论
 exports.del = async ctx => {
     const commentId = ctx.params.id
+    /*
     let articleId
     let uid
     let isOk = true
@@ -108,4 +115,21 @@ exports.del = async ctx => {
             message: "评论删除成功"
         }
     } 
+    */
+   // 使用钩子函数
+   let res = {
+       state: 1,
+       message: "评论删除成功"
+   }
+
+   await Comment.findById(commentId)
+        .then(data => { data.remove() })
+        .catch(err => {
+            res = {
+                state: 0,
+                message: err
+            }
+        })
+    
+    ctx.body = res
 }

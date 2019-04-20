@@ -20,4 +20,21 @@ const ArticleSchema = new Schema({
     }
 });
 
+
+ArticleSchema.post("remove", doc => {
+    const Comment = require("../Models/comment.js")
+    const User = require("../Models/user.js")
+
+    const {_id: artId, author: authorId} = doc
+    // 文章作者的文章数减1
+    User.findByIdAndUpdate(authorId, {$inc: {articleNum: -1}}).exec()
+
+    // 把文章下面所有评论一次删除
+    Comment.find({article: artId})
+        .then(data => {
+            data.forEach(v => v.remove())
+        })
+
+        //console.log("文章通过钩子删除了")
+})
 module.exports = ArticleSchema;

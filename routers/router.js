@@ -91,6 +91,12 @@ router.get("/user/articles", user.keepLog, article.artlist)
 // 删除用户的文章
 router.del("/article/:id", user.keepLog, article.del)
 
+// 管理员获取用户
+router.get("/user/users", user.keepLog, user.userlist)
+
+// 管理员删除用户
+router.del("/user/:id", user.keepLog, user.del)
+
 // 没有路由的页面显示404页面
 router.get("*", async ctx => {
     await ctx.render("404", {

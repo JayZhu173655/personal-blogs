@@ -1,3 +1,4 @@
+/*
 const {db} = require("../Schema/config.js");
 const ArticleSchema = require("../Schema/article.js");
 // 这里导入user的Schema,为了拿到用户的数据的操作 users 集合的实例对象
@@ -13,7 +14,11 @@ const User = db.model("users", UserSchema);
 
 // 通过db对象创建操作comment数据库的模型对象
 const Comment = db.model("comments", CommentSchema);
-
+*/
+// 上面单离出去
+const Article = require("../Models/article.js")
+const User = require("../Models/user.js")
+const Comment = require("../Models/comment.js")
 
 const fs = require("fs");
 const {join} = require("path");
